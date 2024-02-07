@@ -25,66 +25,74 @@
 #include <stdint.h>
 
 /****************************************************************************************************************
- * 											DEFINES																*
+ * 											PERIPHERAL BASE ADDRESSES											*
  * **************************************************************************************************************
  * */
 
-#define RCC_BASE 		0x40021000U				/*Reset and Clock Control peripheral base address				*/
-#define SYSCFG_BASE 	0x40010000U				/*System Configuration peripheral base address 					*/
-#define EXTI_BASE 		0x40010400U				/*Extended interrupt controller peripheral base address         */
-#define DMA_BASE 		0x40020000U				/*DMA peripheral base address									*/
+#define RCC_BASE 					0x40021000U				/*Reset and Clock Control peripheral base address	*/
+#define SYSCFG_BASE 				0x40010000U				/*System Configuration peripheral base address 		*/
+#define EXTI_BASE 					0x40010400U				/*Extended interrupt peripheral base address 		*/
+#define DMA_BASE 					0x40020000U				/*DMA peripheral base address						*/
 
-// Bit positions of peripheral on the RCC_AHBENR register
+/****************************************************************************************************************
+ * 					CLOCK ENABLE MACROS FOR AHB BUS PERIPHERALS													*
+ * **************************************************************************************************************
+ * */
 
-#define DMA_POSITION		0
-#define DMA2_POSITION		1
-#define SRAM_POSITION		2
-#define FLITF_POSITION		4
-#define CRC_POSITION		6
-#define GPIOA_POSITION		17
-#define GPIOB_POSITION		18
-#define GPIOC_POSITION		19
-#define GPIOD_POSITION		20
-#define GPIOE_POSITION		21
-#define GPIOF_POSITION		22
-#define TSC_POSITION		24
+#define RCC_AHBENR_DMAEN			0x00000001U
+#define RCC_AHBENR_DMA2EN			0x00000002U
+#define RCC_AHBENR_SRAMEN			0x00000004U
+#define RCC_AHBENR_FLITFEN			0x00000010U
+#define RCC_AHBENR_CRCEN			0x00000040U
+#define RCC_AHBENR_GPIOAEN			0x00020000U
+#define RCC_AHBENR_GPIOBEN			0x00040000U
+#define RCC_AHBENR_GPIOCEN			0x00080000U
+#define RCC_AHBENR_GPIODEN			0x00100000U
+#define RCC_AHBENR_GPIOEEN 			0x00200000U
+#define RCC_AHBENR_GPIOFEN 			0x00400000U
+#define RCC_AHBENR_TSCEN			0x01000000U
 
-//Bit positions of peripherals on the RCC_APB1ENR register
+/****************************************************************************************************************
+ * 					CLOCK ENABLE MACROS FOR APB1 BUS PERIPHERALS												*
+ * **************************************************************************************************************
+ * */
+#define RCC_APB1ENR_TIM2EN			0x00000001U
+#define RCC_APB1ENR_TIM3EN			0x00000002U
+#define RCC_APB1ENR_TIM6EN			0x00000010U
+#define RCC_APB1ENR_TIM7EN			0x00000020U
+#define RCC_APB1ENR_TIM14EN 		0x00000100U
+#define RCC_APB1ENR_WWDGEN			0x00000800U
+#define RCC_APB1ENR_SPI2EN			0x00004000U
+#define RCC_APB1ENR_USART2EN		0x00020000U
+#define RCC_APB1ENR_USART3EN		0x00040000U
+#define RCC_APB1ENR_USART4EN		0x00080000U
+#define RCC_APB1ENR_USART5EN		0x00100000U
+#define RCC_APB1ENR_I2C1EN			0x00200000U
+#define RCC_APB1ENR_I2C2EN			0x00400000U
+#define RCC_APB1ENR_USBEN			0x00800000U
+#define RCC_APB1ENR_CANEN			0x02000000U
+#define RCC_APB1ENR_CRSEN			0x08000000U
+#define RCC_APB1ENR_PWREN			0x10000000U
+#define RCC_APB1ENR_DACEN			0x20000000U
+#define RCC_APB1ENR_CECEN			0x40000000U
 
-#define TIM2_POSITION		0
-#define TIM3_POSITON		1
-#define TIM6_POSITION		4
-#define TIM7_POSITION		5
-#define TIM14_POSITION 		8
-#define WWDG_POSITION		11
-#define SPI2_POSITION		14
-#define USART2_POSITION		17
-#define USART3_POSITION		18
-#define USART4_POSITION		19
-#define USART5_POSITION		20
-#define I2C1_POSITION		21
-#define I2C2_POSITION		22
-#define USB_POSITON			23
-#define CAN_POSITON			25
-#define CRS_POSITON			27
-#define PWR_POSITION		28
-#define DAC_POSITION		29
-#define CEC_POSITION		30
+/****************************************************************************************************************
+ * 					CLOCK ENABLE MACROS FOR APB2 BUS PERIPHERALS												*
+ * **************************************************************************************************************
+ * */
 
-//Bit positions of peripherals on the RCC_APB2ENR
-
-#define SYSCFG_POSITION	 	0
-#define USART6_POSITION		5
-#define USART7_POSITION		6
-#define USART8_POSITION		7
-#define ADC_POSITION		9
-#define TIM14_POSITION		11
-#define SPI1_POSITION		12
-#define USART1_POSITION		14
-#define TIM15_POSITION		16
-#define TIM16_POSITION 		17
-#define TIM17_POSITION		18
-#define DBG_POSITION		22
+#define RCC_APB2ENR_SYSCFGEN	 	0x00000001U
+#define RCC_APB2ENR_USART6EN		0x00000020U
+#define RCC_APB2ENR_USART7EN		0x00000040U
+#define RCC_APB2ENR_USART8EN		0x00000080U
+#define RCC_APB2ENR_ADCEN			0x00000200U
+#define RCC_APB2ENR_TIM1EN			0x00000800U
+#define RCC_APB2ENR_SPI1EN			0x00001000U
+#define RCC_APB2ENR_USART1EN		0x00004000U
+#define RCC_APB2ENR_TIM15EN			0x00010000U
+#define RCC_APB2ENR_TIM16EN 		0x00020000U
+#define RCC_APB2ENR_TIM17EN			0x00040000U
+#define RCC_APB2ENR_DBGEN			0x00400000U
 
 
 
@@ -106,9 +114,8 @@ typedef struct
 	uint32_t BDCR; 						/*	RTC DOMAIN CONTROL REGISTER 				ADDRESS OFFSET 0X20		*/
 	uint32_t CSR; 						/*	CLOCK OR STATUS REGISTER 					ADDRESS OFFSET 0X24		*/
 	uint32_t AHBRSTR; 					/*	AHB PERIPHERAL RESET REGISTER 				ADDRESS OFFSET 0X28		*/
-	uint8_t CFGR2; 						/*	CLOCK CONFIGURATION REGISTER 2 				ADDRESS OFFSET 0X2C		*/
-	uint8_t 	__RESERVED0__;
-	uint16_t	__RESERVED1__;
+	uint16_t CFGR2; 					/*	CLOCK CONFIGURATION REGISTER 2 			    ADDRESS OFFSET 0X2C		*/
+	uint16_t 	__RESERVED0__;
 	uint32_t CFGR3; 					/*	CLOCK CONFIGURATION REGISTER 3 				ADDRESS OFFSET 0X30 	*/
 	uint32_t CR2; 						/*	CLOCK CONTROL REGISTRER 2 					ADDRESS OFFSET 0X34		*/
 
@@ -244,9 +251,9 @@ typedef struct
  * **************************************************************************************************************
  * */
 
-__attribute__((always_inline)) static inline void RCC_APB_Clock_Enable(uint8_t position)
+__attribute__((always_inline)) static inline void RCC_AHB_Clock_Enable(uint32_t position)
 {
-	if(position <= 0x0F) RCC-> AHBENR |= (1<<position); 
+	 RCC-> AHBENR |= position; 
 }
 
 /****************************************************************************************************************
@@ -263,9 +270,9 @@ __attribute__((always_inline)) static inline void RCC_APB_Clock_Enable(uint8_t p
  * **************************************************************************************************************
  * */
 
-__attribute__((always_inline)) static inline void RCC_APB1_Clock_Enable(uint8_t position)
+__attribute__((always_inline)) static inline void RCC_APB1_Clock_Enable(uint32_t position)
 {
-	if(position <= 0x0F) RCC-> APB1ENR |= (1<<position); 
+	 RCC-> APB1ENR |= position; 
 }
 
 /****************************************************************************************************************
@@ -281,9 +288,10 @@ __attribute__((always_inline)) static inline void RCC_APB1_Clock_Enable(uint8_t 
  * @returns: None																								*
  * **************************************************************************************************************
  * */
-__attribute__((always_inline)) static inline void RCC_APB2_Clock_Enable(uint8_t position)
+
+__attribute__((always_inline)) static inline void RCC_APB2_Clock_Enable(uint32_t position)
 {
-	if(position <= 0x0F) RCC-> APB2ENR |= (1<<position); 
+	 RCC-> APB2ENR |= position; 
 }
 
 #endif

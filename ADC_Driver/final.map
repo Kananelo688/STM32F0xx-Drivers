@@ -1,0 +1,132 @@
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00008000         xr
+SRAM             0x20000000         0x00002000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD obj/stm32f0xx_start_up.o
+LOAD obj/main.o
+LOAD obj/stm32f0xx_adc.o
+
+.text           0x08000000      0x2cc
+ *(.isr_vector)
+ .isr_vector    0x08000000       0xc0 obj/stm32f0xx_start_up.o
+                0x08000000                vectors
+ *(.text)
+ .text          0x080000c0       0x50 obj/stm32f0xx_start_up.o
+                0x080000c0                Reset_Handler
+                0x080000f0                TIM1_CC_IRQHandler
+                0x080000f0                TSC_IRQHandler
+                0x080000f0                HardFault_Handler
+                0x080000f0                SysTick_Handler
+                0x080000f0                PendSV_Handler
+                0x080000f0                NMI_Handler
+                0x080000f0                I2C1_IRQHandler
+                0x080000f0                RCC_CRS_IRQHandler
+                0x080000f0                DMA_CH1_IRQHandler
+                0x080000f0                SPI1_IRQHandler
+                0x080000f0                TIM6_DAC_IRQHandler
+                0x080000f0                EXTI2_3_IRQHandler
+                0x080000f0                I2C2_IRQHandler
+                0x080000f0                TIM17_IRQHandler
+                0x080000f0                CEC_CAN_IRQHandler
+                0x080000f0                RTC_IRQHandler
+                0x080000f0                PVD_VDDIO2_IRQHandler
+                0x080000f0                TIM16_IRQHandler
+                0x080000f0                TIM3_IRQHandler
+                0x080000f0                EXTI4_15_IRQHandler
+                0x080000f0                Default_Handler
+                0x080000f0                TIM14_IRQHandler
+                0x080000f0                DMA_CH4_5_6_7_DMA2_CH3_4_5_IRQHandler
+                0x080000f0                TIM7_IRQHandler
+                0x080000f0                TIM15_IRQHandler
+                0x080000f0                EXTI0_1_IRQHandler
+                0x080000f0                USB_IRQHandler
+                0x080000f0                SPI2_IRQHandler
+                0x080000f0                SVC_Handler
+                0x080000f0                WWDG_IRQHandler
+                0x080000f0                TIM2_IRQHandler
+                0x080000f0                ADC_COMP_IRQHandler
+                0x080000f0                USART2_IRQHandler
+                0x080000f0                USART3_4_5_6_7_8_IRQHandler
+                0x080000f0                FLASH_IRQHandler
+                0x080000f0                TIM1_BRK_COMP_TRG_COM_IRQHandler
+                0x080000f0                USART1_IRQHandler
+                0x080000f0                DMA_CH2_3_DMA2_CH1_2_IRQHandler
+ .text          0x08000110        0x0 obj/main.o
+ .text          0x08000110      0x160 obj/stm32f0xx_adc.o
+                0x08000110                ADC_Configure
+                0x08000224                ADC_Start
+                0x08000244                ADC_Enable
+                0x08000254                ADC_Read_Data
+ *(.text.*)
+ .text.startup  0x08000270       0x5c obj/main.o
+                0x08000270                main
+                0x080002cc                        . = ALIGN (0x4)
+                0x080002cc                        _etext = .
+
+.glue_7         0x080002cc        0x0
+ .glue_7        0x080002cc        0x0 linker stubs
+
+.glue_7t        0x080002cc        0x0
+ .glue_7t       0x080002cc        0x0 linker stubs
+
+.vfp11_veneer   0x080002cc        0x0
+ .vfp11_veneer  0x080002cc        0x0 linker stubs
+
+.v4_bx          0x080002cc        0x0
+ .v4_bx         0x080002cc        0x0 linker stubs
+
+.iplt           0x080002cc        0x0
+ .iplt          0x080002cc        0x0 obj/stm32f0xx_start_up.o
+
+.rel.dyn        0x080002cc        0x0
+ .rel.iplt      0x080002cc        0x0 obj/stm32f0xx_start_up.o
+
+.data           0x20000000        0x4 load address 0x080002cc
+                0x20000000                        _sdata = .
+ *(.data)
+ .data          0x20000000        0x0 obj/stm32f0xx_start_up.o
+ .data          0x20000000        0x2 obj/main.o
+                0x20000000                chnls
+ .data          0x20000002        0x0 obj/stm32f0xx_adc.o
+                0x20000004                        . = ALIGN (0x4)
+ *fill*         0x20000002        0x2 
+                0x20000004                        _edata = .
+
+.igot.plt       0x20000004        0x0 load address 0x080002d0
+ .igot.plt      0x20000004        0x0 obj/stm32f0xx_start_up.o
+
+.bss            0x20000004        0x0 load address 0x080002d0
+                0x20000004                        _sbss = .
+ *(.bss)
+ .bss           0x20000004        0x0 obj/stm32f0xx_start_up.o
+ .bss           0x20000004        0x0 obj/main.o
+ .bss           0x20000004        0x0 obj/stm32f0xx_adc.o
+ *(.bss.*)
+ *(.COMMON)
+                0x20000004                        . = ALIGN (0x4)
+                0x20000004                        _ebss = .
+OUTPUT(bin/final.elf elf32-littlearm)
+LOAD linker stubs
+
+.comment        0x00000000       0x44
+ .comment       0x00000000       0x44 obj/stm32f0xx_start_up.o
+                                 0x45 (size before relaxing)
+ .comment       0x00000044       0x45 obj/main.o
+ .comment       0x00000044       0x45 obj/stm32f0xx_adc.o
+
+.ARM.attributes
+                0x00000000       0x2c
+ .ARM.attributes
+                0x00000000       0x2c obj/stm32f0xx_start_up.o
+ .ARM.attributes
+                0x0000002c       0x2c obj/main.o
+ .ARM.attributes
+                0x00000058       0x2c obj/stm32f0xx_adc.o

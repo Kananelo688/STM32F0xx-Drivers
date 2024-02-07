@@ -68,7 +68,6 @@ It is stored in FLASH*/
 		_sdata = .; /*linker symbol that marks the start of the .data section of the final executable*/
 
 		*(.data) /*merges all .data sections of input files*/
-
 		. = ALIGN(4); /*Align the location counter by 4 bytes*/
 		_edata = .;
 
@@ -79,6 +78,7 @@ It is stored in FLASH*/
 		_sbss = .;
 
 		*(.bss)
+		*(.bss.*)
 		*(.COMMON)
 
 		. = ALIGN(4); /*Align the location counter by 4 bytes*/

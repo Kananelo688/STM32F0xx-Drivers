@@ -59,14 +59,14 @@
  * 									GPIO ALTERNATE FUNCTIONS													*
  **************************************************************************************************************** 
  **/
-#define GPIO_AR00  					(uint8_t) 0x00
-#define GPIO_AR01  					(uint8_t) 0x01
-#define GPIO_AR02  					(uint8_t) 0x02
-#define GPIO_AR03  					(uint8_t) 0x03
-#define GPIO_AR04  					(uint8_t) 0x04
-#define GPIO_AR05  					(uint8_t) 0x05
-#define GPIO_AR06  					(uint8_t) 0x06
-#define GPIO_AR07  					(uint8_t) 0x07
+#define GPIO_AF00  					(uint8_t) 0x00
+#define GPIO_AF01  					(uint8_t) 0x01
+#define GPIO_AF02  					(uint8_t) 0x02
+#define GPIO_AF03  					(uint8_t) 0x03
+#define GPIO_AF04  					(uint8_t) 0x04
+#define GPIO_AF05  					(uint8_t) 0x05
+#define GPIO_AF06  					(uint8_t) 0x06
+#define GPIO_AF07  					(uint8_t) 0x07
 
 /****************************************************************************************************************
  * 									GPIO PORT PIN MODES															*
@@ -102,7 +102,26 @@
 #define GPIO_PULL_UP					0x01U
 #define GPIO_PULL_DOWN					0x02U
 
+/****************************************************************************************************************
+ * 									GPIO PORT PIN RESISTORS														*
+ **************************************************************************************************************** 
+ **/
 
+#define GPIO_ON 						0x01U
+#define GPIO_OFF 						0x00U
+
+/****************************************************************************************************************
+ * 									GPIO DRIVER TYPEDEFS														*
+ **************************************************************************************************************** 
+ **/
+
+typedef uint8_t GPIO_Pin_Number;
+typedef uint8_t GPIO_Mode;
+typedef uint8_t GPIO_Speed;
+typedef uint8_t GPIO_Type;
+typedef uint8_t GPIO_AF;
+typedef uint8_t GPIO_Resistor;
+typedef uint8_t GPIO_State;
 /****************************************************************************************************************
  * 									GPIO STRUCTURE DECLARATION													*
  **************************************************************************************************************** 
@@ -119,8 +138,7 @@ typedef struct
 	uint16_t				ODR; 			/*GPIO OUTPUT DATA REGISTER 			ADDRESS OFFSET 0X14			*/
 	uint16_t			__Reserved2;		/*			RESERVED 												*/
 	uint32_t				BSRR; 			/*GPIO BIT SET/RESET REGISTER 			ADDRESS OFFSET 0x18			*/
-	uint16_t				LCKR; 			/*GPIO LOCK REGISTER 					ADDRESS OFFSET 0x1C			*/
-	uint16_t			__Reserved3;		/*			RESERVED 												*/
+	uint32_t				LCKR; 			/*GPIO LOCK REGISTER 					ADDRESS OFFSET 0x1C			*/
 	uint32_t 				AFRL; 			/*GPIO ALTERNATE FUNCTION LOW REGISTER  ADDRESS OFFSET 0x20			*/
 	uint32_t 				AFRH; 			/*GPIO ALTERNATE FUNCTION HIGH REGISTER ADDRESS OFFSET 0x24			*/
 	uint16_t				BRR; 			/*GPIO BIT RESET REGISTER 				ADDRESS OFFSET 0x28			*/
@@ -146,6 +164,203 @@ typedef struct
  * 									FUNCTION PROTOTYPES															*
  **************************************************************************************************************** 
  **/
+
+
+/****************************************************************************************************************
+ * 																												*
+ * 							GPIO_Set_Pin_Mode()																	*
+ * 																												*
+ * @brief: takes in the GPIO_Typedef structure pointer , pin number and GPIO mode and sets the mode of that pin *
+ *																												*
+ * @params: <gpio> - a pointer to GPIO_Typedef structure for which its pin is to be set to given mode 			* 
+ * 																												*
+ * 			<pin> an 8-bit number that represent the GPIO port pin number for which its MODE is to be set 		*
+ * 																												*
+ * 			<mode> an 8-bit number that represents the mode to set the GPIO port pin. IT must be one of 		*
+ * 					GPIO_INPUT_MODE, GPIO_OUTPUT_MODE, GPIO_ALTERNAT_MODE or GPIO_ANALOG_MODE 					*
+ * 																												*
+ * @returns: None																								*
+ * 																												*
+ **************************************************************************************************************** 
+ **/
+
+__attribute__((always_inline)) static inline void GPIO_Set_Pin_Mode
+(GPIO_Typedef* gpio,GPIO_Pin_Number pin, GPIO_Mode mode)
+
+{
+	if(mode == GPIO_INPUT_MODE){
+		 gpio -> MODER &= ~(0x03<< 2* pin);
+		 return ;
+	}
+
+	gpio -> MODER |= mode << 2*pin;
+}
+
+/****************************************************************************************************************
+ * 																												*
+ * 							GPIO_Set_Pin_Speed																	*
+ * 																												*
+ * @brief: takes in the GPIO_Typedef structure pointer , pin number and GPIO speed and sets the speed of th pin *
+ *																												*
+ * @params: <gpio> - a pointer to GPIO_Typedef structure 														* 
+ * 																												*
+ * 			<pin> an 8-bit number that represent the GPIO port pin number for which its speed is to be set 		*
+ * 																												*
+ * 			<speed> an 8-bit number that represents the speed to set the GPIO port pin. IT must be one of 		*
+ * 					GPIO_LOW_SPEED, GPIO_MEDIUM_SPEED, or  GPIO_HIGH_SPEED 					 					*
+ * 																												*
+ * @returns: None																								*
+ * 																												*
+ **************************************************************************************************************** 
+ **/
+
+__attribute__((always_inline)) static inline void GPIO_Set_Pin_Speed
+(GPIO_Typedef* gpio,GPIO_Pin_Number pin, GPIO_Speed speed)
+
+{
+		if(speed== GPIO_LOW_SPEED){
+
+			gpio ->OSPEEDR &= ~(0x03<< 2* pin);
+			return;
+		}
+
+		gpio -> OSPEEDR |= speed << 2* pin;
+}
+
+/****************************************************************************************************************
+ * 																												*
+ * 							GPIO_Set_Pin_Type																	*
+ * 																												*
+ * @brief: takes in the GPIO_Typedef structure pointer , pin number and GPIO type  and sets th type   of th pin *
+ *																												*
+ * @params: <gpio> - a pointer to GPIO_Typedef structure 														* 
+ * 																												*
+ * 			<pin> an 8-bit number that represent the GPIO port pin number for which its type is to be set 		*
+ * 																												*
+ * 			<speed> an 8-bit number that represents the type to set the GPIO port pin. It must be one of 		*
+ * 					GPIO_PULL_UP, or GPIO_PULL_DOWN	 					 					 					*
+ * 																												*
+ * @returns: None																								*
+ * 																												*
+ **************************************************************************************************************** 
+ **/
+
+__attribute__((always_inline)) static inline void GPIO_Set_Pin_Type
+(GPIO_Typedef* gpio,GPIO_Pin_Number pin, GPIO_Type type)
+{
+
+	if(type == GPIO_PUSH_PULL){
+
+		gpio -> OTYPER &= (0x01<< pin);
+	}
+	 gpio -> OTYPER |= type <<pin;
+}
+
+/****************************************************************************************************************
+ * 																												*
+ * 							GPIO_Set_Pin_AF																		*
+ * 																												*
+ * @brief: takes in the GPIO_Typedef structure pointer , pin number and GPIO speed and sets theE  AF of thE pin *
+ *																												*
+ * @params: <gpio> - a pointer to GPIO_Typedef structure 														* 
+ * 																												*
+ * 			<pin> an 8-bit number that represent the GPIO port pin number for which its AF is to be set 		*
+ * 																												*
+ * 			<speed> an 8-bit number that represents the speed to set the GPIO port pin.			 				*
+ * 																												*
+ * @returns: None																								*
+ * 																												*
+ **************************************************************************************************************** 
+ **/
+
+ __attribute__((always_inline)) static inline void GPIO_Set_Pin_AF 
+ (GPIO_Typedef* gpio,const GPIO_Pin_Number pin,const GPIO_AF function)
+ {
+	if(pin <= GPIO_PIN_7){
+		
+		if(function == GPIO_AF00){
+
+			gpio -> AFRL &= ~(0x0F<<pin*4);
+			return;
+		}
+
+		gpio -> AFRL |= (function << pin*4);
+	}
+	else 
+	{
+		if(function == GPIO_AF00){
+
+			gpio -> AFRH &= ~(0x0F<<(pin-GPIO_PIN_8)*4);
+			return;
+		}
+
+		gpio -> AFRH |= (function << (pin-GPIO_PIN_8)*4);
+	}
+}
+
+/****************************************************************************************************************
+ * 																												*
+ * 							GPIO_Set_Pin_Resistor																*
+ * 																												*
+ * @brief: takes in the GPIO_Typedef structure pointer , pin number and GPIO resistor.				    		*
+ *																												*
+ * @params: <gpio> - a pointer to GPIO_Typedef structure 														* 
+ * 																												*
+ * 			<pin> an 8-bit number that represent the GPIO port pin number for which its speed is to be set 		*
+ * 																												*
+ * 			<speed> an 8-bit number that represents the resistorr to set the GPIO port pin. 					*					 					*
+ * 																												*
+ * @returns: None																								*
+ * 																												*
+ **************************************************************************************************************** 
+ **/
+
+__attribute__((always_inline)) static inline void GPIO_Set_Pin_Resistor
+(GPIO_Typedef* gpio,const GPIO_Pin_Number pin, const GPIO_Resistor res)
+{
+	gpio -> PUPDR |= res << pin *2 ;
+}
+
+/************************************************************************************************************
+ * 								GPIO_Toggle_Pin																*
+ * 																											*
+ * @brief: toggles the given GPIO pin.																		*
+ * 																											*
+ * @param gpio- the pointer to GPIO_Typedef for the GPIO being accessed.									*
+ * 																											*
+ * @param pin - the GPIO port pin number which is to be toggled.											*
+ * 																											*
+ * @retval: None																							*
+ * 																											*
+ * **********************************************************************************************************
+ * */
+
+__attribute__((always_inline)) static inline void GPIO_Toggle_Pin(GPIO_Typedef* gpio, GPIO_Pin_Number pin){
+
+	gpio -> ODR ^= 1 << pin;
+}
+
+/************************************************************************************************************
+ * 								GPIO_Get_State																*
+ * 																											*
+ * @brief: Returns the GPIO_State of the given GPIO_Pin_Number												*
+ * 																											*
+ * @param gpio- the pointer to GPIO_Typedef for the GPIO being accessed.									*
+ * 																											*
+ * @param pin - the GPIO port pin number whose state is returned											*
+ * 																											*
+ * @retval: GPIO_State - either GPIO_ON or GPIO_OFF depending of the value of GPIO_IDR						*
+ * 																											*
+ * **********************************************************************************************************
+ * */
+__attribute__((always_inline)) static inline GPIO_State GPIO_Get_State(GPIO_Typedef* gpio, GPIO_Pin_Number pin)
+{
+
+	if(gpio->IDR & 0x01<<pin) return GPIO_ON;
+
+	return GPIO_OFF;
+
+}
 
 
 #endif
